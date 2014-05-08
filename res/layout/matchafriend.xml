@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:facebook="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+   
+     <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+   
+         <com.facebook.widget.ProfilePictureView
+             android:id="@+id/profilePicture"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_gravity="center_horizontal"
+             app:is_cropped="true"
+             app:preset_size="large" />
+         
+</LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+      
+      <com.facebook.widget.ProfilePictureView
+          android:id="@+id/profilePicture1"
+          android:layout_width="120dp"
+          android:layout_height="wrap_content"
+          app:is_cropped="true"
+          app:preset_size="large" />
+
+      <com.facebook.widget.ProfilePictureView
+          android:id="@+id/profilePicture2"
+          android:layout_width="120dp"
+          android:layout_height="wrap_content"
+          app:is_cropped="true"
+          app:preset_size="large" />
+      
+      
+      <com.facebook.widget.ProfilePictureView
+          android:id="@+id/profilePicture3"
+          android:layout_width="120dp"
+          android:layout_height="wrap_content"
+          app:is_cropped="true"
+          app:preset_size="large" />
+
+     <Button
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:onClick="Back"
+        android:text="Back To Main Screen" />
+      
+    
+    </LinearLayout>
+    
+ </LinearLayout>
+
+
