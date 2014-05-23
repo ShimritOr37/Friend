@@ -58,8 +58,7 @@
             android:layout_column="0"
             android:layout_row="0"
             />
-
-       
+        
     </LinearLayout>
 
     <LinearLayout
@@ -81,5 +80,13 @@
 
        
     </LinearLayout>
+
+     <Button
+         android:id="@+id/back"
+         android:layout_column="0"
+         android:layout_gravity="left|bottom"
+         android:layout_row="1"
+         android:onClick="back"
+         android:text="Back" />
 
 </GridLayout>

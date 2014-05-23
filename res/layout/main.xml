@@ -14,33 +14,20 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:facebook="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical" >
-
-    <Button
-        android:id="@+id/button3"
+ 
+   <com.facebook.widget.LoginButton
+        android:id="@+id/authButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@drawable/login"
-        android:onClick="buttonClicks2" />
-    
-    <TextView
-        android:id="@+id/birthday"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
-    
-    <TextView
-        android:id="@+id/relationship"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        />
   
     
      <com.facebook.widget.ProfilePictureView
@@ -51,46 +38,33 @@
         app:is_cropped="true"
         app:preset_size="large" />
     
-     <Button
-         android:id="@+id/Button01"
-         android:layout_width="119dp"
-         android:layout_height="wrap_content"
-         android:onClick="nextFriend"
-         android:text="Next" />
+    
 
-        <com.facebook.widget.LoginButton
-        android:id="@+id/authButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dp"
-        />
+        
+
      <ImageButton
          android:id="@+id/pickFriendsButton"
          android:layout_width="fill_parent"
          android:layout_height="wrap_content"
-         android:src="@drawable/friend12"
-         />
+         android:onClick="onClick"
+         android:src="@drawable/friend12" />
+     <Button
+         android:id="@+id/nextF"
+         android:layout_width="119dp"
+         android:layout_height="wrap_content"
+         android:onClick="nextFriend"
+         android:text="Next Friend to Publish" />
 
-    <ImageButton
-        android:id="@+id/FacebookLogo"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:onClick="buttonClicks"
-        android:src="@drawable/friend22" />
+     <TextView
+         android:id="@+id/namef"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content" />
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="2dp"
-        android:onClick="buttonClicks2"
-        android:shadowRadius="2"
-        android:text="My friend are..."
-        android:visibility="visible" />
-    
-
- 
-  
+     <TextView
+         android:id="@+id/birthday"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:visibility="visible" />
 
     <TextView
         android:id="@+id/resultsTextView"
@@ -98,7 +72,17 @@
         android:layout_height="wrap_content"
         android:text="TextView" />
 
-  
+    <TextView
+        android:id="@+id/relationship"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageButton
+        android:id="@+id/publishCom"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:onClick="buttonClicks"
+        android:src="@drawable/friend22" />
  
     <LinearLayout
         android:layout_width="200dp"
