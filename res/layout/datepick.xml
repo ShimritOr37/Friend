@@ -14,7 +14,7 @@
         android:id="@+id/lblDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Current Date (M-D-YYYY): "
+        android:text="This is your Friend's Birthday: "
         android:textAppearance="?android:attr/textAppearanceLarge" />  
     <TextView
         android:id="@+id/tvDate"

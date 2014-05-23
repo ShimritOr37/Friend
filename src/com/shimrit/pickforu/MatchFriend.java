@@ -143,8 +143,9 @@ public class MatchFriend extends Activity {
 	    	Log.d(TAG,"running for "+Singleton.Id+" "+Singleton.Name);
 	    	bd="start";
 	    	for (GraphObject friendInfo: Singleton.friendInfoList){
-	    	if (friendInfo.getProperty("relationship_status").toString().substring(0,2).equals("Ma")&&friendInfo.getProperty("uid").equals(Singleton.Id)){
+	    	if (friendInfo.getProperty("uid").toString().equals(Singleton.Id.toString())&&friendInfo.getProperty("relationship_status").toString().substring(0,2).equals("Ma")){
 	    		Married=true;
+	    		Log.d(TAG,"married"+friendInfo.getProperty("relationship_status").toString().substring(0,2));
 	    	}
         		if (((friendInfo.getProperty("relationship_status"))!=null&&!friendInfo.getProperty("relationship_status").toString().substring(0,2).equals("Ma"))||(friendInfo.getProperty("relationship_status")==null)){//NOT MARRIED
         			Log.d(TAG,"this is b"+friendInfo.getProperty("birthday_date").toString()+" "+friendInfo.getProperty("name") +"b"+friendInfo.getProperty("birthday").toString());
@@ -191,15 +192,21 @@ public class MatchFriend extends Activity {
       	Singleton.gender=gender;
       
 		Intent intentC = new Intent(this, DateChoser.class);	
-	    if (Singleton.bd.equals("start")||(!Singleton.gender.contains("ale"))){
-	    	
-	    		startActivityForResult(intentC, NO_INFO);
-	    }else{
+	    if (Singleton.bd.equals("start")||(!Singleton.gender.contains("ale"))){//check if info missing
 	    	if (!Married){
+	    		startActivityForResult(intentC, NO_INFO);
+	    	}else{
+	    		message();
+	    		 }
+	    	
+	    }else{
+	    	if (!Married){//go and show the match
 	    		set();
 	    	}else
 	    	{
-	    		finish();
+	    		
+	    		message();
+	    		
 	    	}
 	        	//startActivityForResult(this.getIntent(),BIRTHDAY);
 	    	 }
@@ -279,7 +286,7 @@ public class MatchFriend extends Activity {
    	 }
 	}//end set
         public void message(){//birtday not found
-	 		   final Toast toast2= Toast.makeText(MatchFriend.this, Singleton.Name.toString()+" Didn't declare his birthday or Married, Please chose a different friend", Toast.LENGTH_LONG);
+	 		   final Toast toast2= Toast.makeText(MatchFriend.this, Singleton.Name.toString()+"Married, Please chose a different friend", Toast.LENGTH_LONG);
 	 		   toast2.setGravity(Gravity.TOP|Gravity.LEFT, 0, 0);
 	 		new CountDownTimer(6000, 1000)
 	 		{
@@ -290,6 +297,7 @@ public class MatchFriend extends Activity {
 	 		}.start();
 	 		   toast2.setDuration(5200);
 				toast2.show();
+				finish();
 
    	}//message     
 

@@ -64,6 +64,9 @@ public class DragActivity extends Activity {
     	Bitmap bm=null;
 		URL url=null;
 		
+		if (Singleton.friendInfo==null){// if no one was chose take the first friend
+			Singleton.friendInfo=Singleton.friendInfoList.get(0);
+		}
 		Log.d(TAG,"number is"+ Singleton.friendInfo.getProperty("uid"));	
 		
 		try{
@@ -278,7 +281,7 @@ public class DragActivity extends Activity {
 public void post(String des) {
 	
 	Bundle params = new Bundle();
-	params.putString("to", FriendPickerSampleActivity.friendInfoList.get(FriendPickerSampleActivity.index).getProperty("uid").toString());
+	params.putString("to", Singleton.friendInfo.getProperty("uid").toString());
 	params.putString("description", "As your friend I have to say you are so "+des);
 	//params.putString("link", "http://www.gmail.com");
 	if (des=="funny")
