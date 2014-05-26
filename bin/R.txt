@@ -86,7 +86,7 @@ int drawable shape_droptarget 0x7f02002d
 int drawable smart 0x7f02002e
 int id authButton 0x7f04002c
 int id back 0x7f04000b
-int id birthday 0x7f040031
+int id birthday 0x7f040032
 int id bottomleft 0x7f040005
 int id bottomright 0x7f040009
 int id btnChangeDate 0x7f040021
@@ -126,8 +126,8 @@ int id myimage1 0x7f040004
 int id myimage2 0x7f040008
 int id myimage3 0x7f040006
 int id myimage4 0x7f04000a
-int id namef 0x7f040030
-int id nextF 0x7f04002f
+int id namef 0x7f040031
+int id nextF 0x7f040030
 int id normal 0x7f040001
 int id pickFriendsButton 0x7f04002e
 int id picker_subtitle 0x7f04001b
@@ -137,7 +137,7 @@ int id profilePicture2 0x7f040036
 int id profilePicture3 0x7f040037
 int id publishCom 0x7f040034
 int id relationship 0x7f040033
-int id resultsTextView 0x7f040032
+int id resultsTextView 0x7f04002f
 int id setInfo 0x7f040028
 int id small 0x7f040000
 int id textViewResults 0x7f04002b

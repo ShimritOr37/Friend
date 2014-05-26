@@ -227,7 +227,7 @@ containing a value of this type.
     public static final class id {
         public static final int authButton=0x7f04002c;
         public static final int back=0x7f04000b;
-        public static final int birthday=0x7f040031;
+        public static final int birthday=0x7f040032;
         public static final int bottomleft=0x7f040005;
         public static final int bottomright=0x7f040009;
         public static final int btnChangeDate=0x7f040021;
@@ -267,8 +267,8 @@ containing a value of this type.
         public static final int myimage2=0x7f040008;
         public static final int myimage3=0x7f040006;
         public static final int myimage4=0x7f04000a;
-        public static final int namef=0x7f040030;
-        public static final int nextF=0x7f04002f;
+        public static final int namef=0x7f040031;
+        public static final int nextF=0x7f040030;
         public static final int normal=0x7f040001;
         public static final int pickFriendsButton=0x7f04002e;
         public static final int picker_subtitle=0x7f04001b;
@@ -278,7 +278,7 @@ containing a value of this type.
         public static final int profilePicture3=0x7f040037;
         public static final int publishCom=0x7f040034;
         public static final int relationship=0x7f040033;
-        public static final int resultsTextView=0x7f040032;
+        public static final int resultsTextView=0x7f04002f;
         public static final int setInfo=0x7f040028;
         public static final int small=0x7f040000;
         public static final int textViewResults=0x7f04002b;

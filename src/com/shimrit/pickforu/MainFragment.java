@@ -47,10 +47,11 @@ public class MainFragment extends Fragment {
 	    	profilePicture.setProfileId(Singleton.Id);
 	    	
 	    }
-	    //authButton.setReadPermissions(Arrays.asList(PERMISSIONS));
+	    	
+	    authButton.setReadPermissions(Arrays.asList(PERMISSIONS));
 	   
 		//Session session = Session.getActiveSession();
-		
+		ensureOpenSession();
 		
 		
 		return view;
@@ -99,7 +100,9 @@ public class MainFragment extends Fragment {
 				}		});
 			
 			
-			Request.executeBatchAsync(req);//req for user
+			Request.executeBatchAsync(req);//req for user}
+	    	
+	    
 			
 		
 	    } 

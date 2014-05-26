@@ -38,8 +38,6 @@
         app:is_cropped="true"
         app:preset_size="large" />
     
-    
-
         
 
      <ImageButton
@@ -48,12 +46,19 @@
          android:layout_height="wrap_content"
          android:onClick="onClick"
          android:src="@drawable/friend12" />
+     
+     <TextView
+        android:id="@+id/resultsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="" />
+    
      <Button
          android:id="@+id/nextF"
-         android:layout_width="119dp"
-         android:layout_height="wrap_content"
+         android:layout_width="wrap_content"
+         android:layout_height="80dp"
          android:onClick="nextFriend"
-         android:text="Next Friend to Publish" />
+         android:text="Next friend to post on wall" />
 
      <TextView
          android:id="@+id/namef"
@@ -66,16 +71,12 @@
          android:layout_height="wrap_content"
          android:visibility="visible" />
 
-    <TextView
-        android:id="@+id/resultsTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
-
+  
     <TextView
         android:id="@+id/relationship"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+    
 
     <ImageButton
         android:id="@+id/publishCom"
@@ -83,14 +84,8 @@
         android:layout_height="wrap_content"
         android:onClick="buttonClicks"
         android:src="@drawable/friend22" />
- 
-    <LinearLayout
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:orientation="horizontal" >
+   
+    
 
-     
-   </LinearLayout>
     
 </LinearLayout>

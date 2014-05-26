@@ -26,12 +26,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.Manifest.permission;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -316,6 +318,7 @@ public class FriendPickerSampleActivity extends FragmentActivity {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
 		case PICK_FRIENDS_ACTIVITY: {
+			
 			displaySelectedFriends(resultCode);
 			Log.d("bugbug", "pf");
 			trythis();
@@ -393,7 +396,7 @@ public class FriendPickerSampleActivity extends FragmentActivity {
 			results = TextUtils.join(", ", names);
 
 		} else {
-			results = "<No friends selected>";
+			results = "";
 
 		}
 

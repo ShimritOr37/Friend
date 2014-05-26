@@ -59,6 +59,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -84,6 +85,7 @@ import com.facebook.model.GraphUser;
 import com.shimrit.pickforu.R;
 import com.facebook.widget.LoginButton;
 import com.facebook.widget.ProfilePictureView;
+
 
 
 
@@ -189,6 +191,7 @@ public class MatchFriend extends Activity {
 	    
 	    	    }//end of checking list
 	    Singleton.bd=bd;
+	    Log.d(TAG,"running for birthday"+Singleton.bd);
       	Singleton.gender=gender;
       
 		Intent intentC = new Intent(this, DateChoser.class);	
@@ -230,8 +233,11 @@ public class MatchFriend extends Activity {
 			   	int monthl=Integer.parseInt(m.substring(0,2));
 			   	myCal.set( 2000,mod(monthl+6,12),Integer.parseInt(m.substring(3,5)));
 			   	Log.d(TAG,"OP DATE"+mod(monthl+6,12));
+			   	
    			}else{
    				myCal.set( 2000,mod(Singleton.month+6,12),Singleton.day);
+   				Log.d(TAG,"the person that was chosen has no birthday");
+   				Singleton.month=0;
    			}
    				
    	//mycall is the required date to the person candidate 
@@ -286,8 +292,13 @@ public class MatchFriend extends Activity {
    	 }
 	}//end set
         public void message(){//birtday not found
-	 		   final Toast toast2= Toast.makeText(MatchFriend.this, Singleton.Name.toString()+"Married, Please chose a different friend", Toast.LENGTH_LONG);
+	 		   final Toast toast2= Toast.makeText(MatchFriend.this, Singleton.Name.toString()+" is Married, Please chose a different friend", Toast.LENGTH_LONG);
 	 		   toast2.setGravity(Gravity.TOP|Gravity.LEFT, 0, 0);
+	 		 
+		 		 LinearLayout toastLayout = (LinearLayout) toast2.getView();
+		 		 TextView toastTV = (TextView) toastLayout.getChildAt(0);
+		 		 toastTV.setTextSize(50);
+		 		 toast2.show();
 	 		new CountDownTimer(6000, 1000)
 	 		{
 

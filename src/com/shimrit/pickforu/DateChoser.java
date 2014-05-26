@@ -8,12 +8,14 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class DateChoser extends Activity {
 
@@ -37,6 +39,14 @@ public class DateChoser extends Activity {
 		
 		if (Singleton.gender==null||!Singleton.gender.contains("male")){
 			group.setVisibility(View.VISIBLE);
+			if (!Singleton.bd.equals("start")){
+				btnChangeDate = (Button) findViewById(R.id.btnChangeDate);
+				btnChangeDate.setVisibility(View.INVISIBLE);//button invis
+				TextView lblDate = (TextView)findViewById(R.id.lblDate);
+				TextView tvDate = (TextView)findViewById(R.id.lblDate);
+				lblDate.setVisibility(View.INVISIBLE);//text invis
+				tvDate.setVisibility(View.INVISIBLE);
+			}
 		}
 		
 		
@@ -138,8 +148,19 @@ public class DateChoser extends Activity {
 			
 			break;
 		case R.id.setInfo:{
+			if (!Singleton.bd.equals("start")){
+				finish();
+			}else{
+				  final Toast toast2= Toast.makeText(DateChoser.this,"Please set Birthday date for "+ Singleton.Name.toString(), Toast.LENGTH_SHORT);
+		 		   toast2.setGravity(Gravity.TOP|Gravity.LEFT, 0, 0);
+		 		   toast2.show();
+			}
+			if (Singleton.gender==null){
+				 final Toast toast2= Toast.makeText(DateChoser.this,"Please set Gender for "+ Singleton.Name.toString(), Toast.LENGTH_SHORT);
+		 		   toast2.setGravity(Gravity.TOP|Gravity.LEFT, 0, 0);
+		 		   toast2.show();
+			}
 			
-			finish();
 		}
 			break;
 
