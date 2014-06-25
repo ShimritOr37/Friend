@@ -4,19 +4,32 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Random;
 
+import com.facebook.HttpMethod;
+import com.facebook.Request;
+import com.facebook.RequestAsyncTask;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.Session.OpenRequest;
+import com.facebook.SessionState;
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
 import com.facebook.android.FacebookError;
 import com.facebook.android.Facebook.DialogListener;
+import com.facebook.model.GraphObject;
+import com.facebook.widget.WebDialog;
+import com.facebook.widget.WebDialog.OnCompleteListener;
 import com.shimrit.pickforu.R;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.Drawable.Callback;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -30,8 +43,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.facebook.FacebookException;
+import com.facebook.FacebookOperationCanceledException;
+import com.facebook.SharedPreferencesTokenCachingStrategy;
 
 
+@SuppressLint("Instantiatable")
 public class DragActivity extends Activity {
 	
 	Button back;
@@ -49,7 +68,8 @@ public class DragActivity extends Activity {
     StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
     StrictMode.setThreadPolicy(policy); 
-    back= (Button)findViewById(R.id.back);
+    Singleton.pick=0;//initial state
+   
     findViewById(R.id.myimage1).setOnTouchListener(new MyTouchListener());
     findViewById(R.id.myimage2).setOnTouchListener(new MyTouchListener());
     findViewById(R.id.myimage3).setOnTouchListener(new MyTouchListener());
@@ -58,19 +78,26 @@ public class DragActivity extends Activity {
     findViewById(R.id.topright).setOnDragListener(new MyDragListener2());
     findViewById(R.id.bottomleft).setOnDragListener(new MyDragListener3());
     findViewById(R.id.bottomright).setOnDragListener(new MyDragListener4());
+    Button nextFriendi = (Button) findViewById(R.id.nextF);
     
+    setPic();
+  }
+    public void setPic(){
     if (Singleton.friendInfoList!=null){
     	
     	Bitmap bm=null;
 		URL url=null;
-		
-		if (Singleton.friendInfo==null){// if no one was chose take the first friend
-			Singleton.friendInfo=Singleton.friendInfoList.get(0);
+	  
+		if (Singleton.next){// if no one was chose take the first friend
+			GraphObject member=Singleton.friendInfoList.get(Singleton.i);
+			if (member!=null){
+			Singleton.Id= member.getProperty("uid").toString();
+			}
 		}
-		Log.d(TAG,"number is"+ Singleton.friendInfo.getProperty("uid"));	
+	//	Log.d(TAG,"number is"+ Singleton.friendInfo.getProperty("uid"));	
 		
 		try{
-			 	url= new URL("https://graph.facebook.com/"+Singleton.friendInfo.getProperty("uid")+"/picture?type=large");
+			 	url= new URL("https://graph.facebook.com/"+Singleton.Id+"/picture?type=large");
 			 	bm=BitmapFactory.decodeStream(url.openConnection().getInputStream());
 			 
 			//imgView.setImageBitmap();
@@ -91,10 +118,55 @@ public class DragActivity extends Activity {
   }
   
   }
-  public void back(View v){
-	 finish();
+  
+  public void nextFriend(View v){
+	  Singleton.next=true;
+	  Singleton.i++;
+	  setPic();
+	  
   }
-  private final class MyTouchListener implements OnTouchListener {
+
+/*	public void nextFriend(View v) throws MalformedURLException {
+		index++;
+	
+		// imgView= (ImageView)findViewById(R.id.imageView1);
+		birthday = (TextView) findViewById(R.id.birthday);
+		TextView namef = (TextView) findViewById(R.id.namef);
+		relationship = (TextView) findViewById(R.id.relationship);
+		
+			if (Singleton.friendInfoList != null) {
+				friendInfoList=Singleton.friendInfoList;
+				
+				//Singleton.profilePicture.setProfileId(friendInfoList.get(index)
+					//	.getProperty("uid").toString());
+				
+				Log.d(TAG,friendInfoList.get(index)
+						.getProperty("uid").toString());
+				
+				String bd = friendInfoList.get(index)
+						.getProperty("birthday_date").toString();
+
+				birthday.setText(bd);
+
+				namef.setText(friendInfoList.get(index).getProperty("name")
+						.toString());
+
+				if (friendInfoList.get(index).getProperty("relationship_status") != null){
+					relationship.setText((CharSequence) friendInfoList
+							.get(index).getProperty("relationship_status")
+							.toString());
+				}
+				
+				Singleton.friendInfo=friendInfoList.get(index);
+				// birthday.setText("SS");
+			
+
+	}
+	}
+	
+	*/
+  @SuppressLint("Instantiatable")
+private final class MyTouchListener implements OnTouchListener {
     public boolean onTouch(View view, MotionEvent motionEvent) {
       if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
         ClipData data = ClipData.newPlainText("", "");
@@ -276,12 +348,15 @@ public class DragActivity extends Activity {
 		      }
 		      return true;
 		    }
-		  }
+  }
   /////
+
 public void post(String des) {
-	
+	String Token=Session.getActiveSession().getAccessToken();
 	Bundle params = new Bundle();
-	params.putString("to", Singleton.friendInfo.getProperty("uid").toString());
+	params.putString("token",Token);
+	params.putString("id",Singleton.UserId);
+	params.putString("to", Singleton.Id);
 	params.putString("description", "As your friend I have to say you are so "+des);
 	//params.putString("link", "http://www.gmail.com");
 	if (des=="funny")
@@ -290,12 +365,14 @@ public void post(String des) {
     params.putString("picture", "http://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Albert_Einstein_Head.jpg/200px-Albert_Einstein_Head.jpg");	
 	if (des=="kind")
 	params.putString("picture", "http://www.hashalom.org.il/iton/huthashani/images/tmp/%D7%94%D7%A2%D7%A5%20%D7%94%D7%A0%D7%93%D7%99%D7%91.jpg");	
-	Facebook fb;
-	fb=new Facebook("143407059196911");
 
 	
+
 	
+	Facebook fb;
+	fb=new Facebook("143407059196911");
 	
+
 	fb.dialog(DragActivity.this, "feed",params, new DialogListener() {
 		
 		@Override
@@ -314,18 +391,21 @@ public void post(String des) {
 		public void onComplete(Bundle values) {
 			
 			// TODO Auto-generated method stub
+		
+			
 			
 		}
 		
 		@Override
 		public void onCancel() {
 			// TODO Auto-generated method stub
+			finish();
 			
 		}
 	});
 	// TODO Auto-generated method stub
+	 
 }
-
 
 }//class
 

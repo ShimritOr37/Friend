@@ -16,7 +16,9 @@
 -->
 
 <resources>
-    <string name="app_name">FriendPickerSample</string>
+    <color name="black">#000000</color>
+    <color name="LightPink">#FFB6C1</color>
+    <string name="app_name">Pick4U</string>
     <string name="app_id">143407059196911</string>
     <string name="exception">Exception: %1$s</string>
     <string name="ok_button">OK</string>

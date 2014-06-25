@@ -3,7 +3,7 @@
 	<name>FriendPickerSample</name>
 	<comment></comment>
 	<projects>
-		<project>FacebookSDK</project>
+		<project>FacebookSDK3</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

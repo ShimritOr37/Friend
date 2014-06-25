@@ -5,7 +5,9 @@ import android.widget.Toast;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 
 import javax.security.auth.callback.Callback;
 
@@ -42,11 +45,14 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.ConditionVariable;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.StrictMode;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
@@ -90,6 +96,12 @@ import com.facebook.widget.ProfilePictureView;
 
 
 
+
+
+
+
+
+
 import android.os.Bundle;
 
 
@@ -99,101 +111,52 @@ public class MatchFriend extends Activity {
 	private static final int NO_INFO = 0;
 	private static final int BIRTHDAY = 1;
 	private ConditionVariable mCondition;
-	boolean Married=false;
+	static boolean Married=false;
 	String op;
-	String bd="start";
-	String gender;
+	static String bd="start";
+	static String gender;
 	Button back;
-	String TAG= MatchFriend.class.getSimpleName();
+	static String TAG= MatchFriend.class.getSimpleName();
 	GraphObject[] array= new GraphObject[40];
 	static int index;
-	 ArrayList<GraphObject> temp, Aries,	Taurus	,Gemini	,Cancer	,Leo	,Virgo	,Libra,	Scorpio,	Sagittarius,	Capricorn,	Aquarius,	Pisces = new ArrayList<GraphObject>();
+	 ArrayList<GraphObject> temp;
+	static ArrayList<GraphObject> Aries;
+	static ArrayList<GraphObject> Taurus;
+	static ArrayList<GraphObject> Gemini;
+	static ArrayList<GraphObject> Cancer;
+	static ArrayList<GraphObject> Leo;
+	static ArrayList<GraphObject> Virgo;
+	static ArrayList<GraphObject> Libra;
+	static ArrayList<GraphObject> Scorpio;
+	static ArrayList<GraphObject> Sagittarius;
+	static ArrayList<GraphObject> Capricorn;
+	static ArrayList<GraphObject> Aquarius;
+	static ArrayList<GraphObject> Pisces = new ArrayList<GraphObject>();
 	 RadioButton female,male;
-	 Map<String, List <GraphObject>> output = new HashMap<String, List <GraphObject>>(); 
+	
+	public File imagePath; 
 	 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    
 		super.onCreate(savedInstanceState);
 	    setContentView(R.layout.matchafriend);
-	   
-	    
-	  
-	    output.put("Aries",Aries= new ArrayList<GraphObject>()); 
-	    output.put("Taurus",Taurus=new ArrayList<GraphObject>()); 
-	    output.put("Gemini",Gemini=new ArrayList<GraphObject>());
-	    output.put("Cancer",Cancer=new ArrayList<GraphObject>());
-	    output.put("Virgo",Virgo=new ArrayList<GraphObject>());
-	    output.put("Cancer",Cancer=new ArrayList<GraphObject>());
-	    output.put("Libra",Libra=new ArrayList<GraphObject>());
-	    output.put("Scorpio",Scorpio=new ArrayList<GraphObject>());
-	    output.put("Sagittarius",Sagittarius=new ArrayList<GraphObject>());
-	    output.put("Capricorn",Capricorn=new ArrayList<GraphObject>());
-	    output.put("Aquarius",Aquarius=new ArrayList<GraphObject>());
-	    output.put("Pisces", Pisces=new ArrayList<GraphObject>());
+	
 
 	    female=(RadioButton)findViewById(R.id.female);
 	    male=(RadioButton)findViewById(R.id.male);
-	    TextView Gender = (TextView)findViewById(R.id.gender);
 	    Log.d(TAG,"ID IS "+Singleton.Id+ " name:"+Singleton.Name+ "bd "+Singleton.bd);
 	    
+
+	    if (!Singleton.Id.equals(Singleton.UserId)){//if the match is not for the user 
+	    //	Singleton.gender=gender;
+	    }	
 	    
-	    
-	    if (Singleton.friendInfoList != null ){
-	    
-	    	index=0;    	
-	    	Log.d(TAG,"running for "+Singleton.Id+" "+Singleton.Name);
-	    	bd="start";
-	    	for (GraphObject friendInfo: Singleton.friendInfoList){
-	    	if (friendInfo.getProperty("uid").toString().equals(Singleton.Id.toString())&&friendInfo.getProperty("relationship_status").toString().substring(0,2).equals("Ma")){
-	    		Married=true;
-	    		Log.d(TAG,"married"+friendInfo.getProperty("relationship_status").toString().substring(0,2));
-	    	}
-        		if (((friendInfo.getProperty("relationship_status"))!=null&&!friendInfo.getProperty("relationship_status").toString().substring(0,2).equals("Ma"))||(friendInfo.getProperty("relationship_status")==null)){//NOT MARRIED
-        			Log.d(TAG,"this is b"+friendInfo.getProperty("birthday_date").toString()+" "+friendInfo.getProperty("name") +"b"+friendInfo.getProperty("birthday").toString());
-        			if (friendInfo.getProperty("birthday_date")!=null && friendInfo.getProperty("birthday_date").toString().length()>4){
-        					//has birthday
-        					String date=friendInfo.getProperty("birthday_date").toString().substring(0, 5);	
-        			        Date date1 = null;
-							try {
-								date1 = new SimpleDateFormat("MM/dd",Locale.ENGLISH).parse(date);
-							} catch (ParseException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							Calendar cal = Calendar.getInstance();
-							cal.setTime(date1);
-							int month = cal.get(Calendar.MONTH)+1;
-							int day = cal.get(Calendar.DAY_OF_MONTH);
-							int year = cal.get(Calendar.YEAR);
-							
-							if (date1!=null){
-								String signs=ZodiacSign(date1, "ff");
-								Log.d(TAG,"DATE "+date+friendInfo.getProperty("name")+"sign is "+signs+" day "+day+" month "+month);
-							
-								if (output.containsKey(signs)){//find sign and put it into the right list
-									output.get(signs).add(friendInfo);
-									Log.d(TAG,"uid"+friendInfo.getProperty("uid").toString());
-									Log.d(TAG,"uid"+Singleton.Id.toString());
-									if (friendInfo.getProperty("uid").toString().equals(Singleton.Id.toString())){
-										bd=friendInfo.getProperty("birthday_date").toString();
-										gender=friendInfo.getProperty("sex").toString();							
-										Log.d(TAG,"YES");
-									}
-								}//end adding list
-							}//end check null
-        				}//birthday
-        			
-        			}//end for relationship
-	    	        	
-	    		}//end for the whole list. exit if bd
-	    	
-	    
-	    	    }//end of checking list
-	    Singleton.bd=bd;
 	    Log.d(TAG,"running for birthday"+Singleton.bd);
-      	Singleton.gender=gender;
-      
+      	
+	   //put value in lists
+	    //if (getlist()!=null)
+	    {
 		Intent intentC = new Intent(this, DateChoser.class);	
 	    if (Singleton.bd.equals("start")||(!Singleton.gender.contains("ale"))){//check if info missing
 	    	if (!Married){
@@ -213,15 +176,91 @@ public class MatchFriend extends Activity {
 	    	}
 	        	//startActivityForResult(this.getIntent(),BIRTHDAY);
 	    	 }
-	    
+	    }
 	}//endCreate
+	
+    
+    public static Map<String,List <GraphObject> > getlist(){
+    	  
+	    Singleton.output.put("Aries",Aries= new ArrayList<GraphObject>()); 
+	    Singleton.output.put("Taurus",Taurus=new ArrayList<GraphObject>()); 
+	    Singleton.output.put("Gemini",Gemini=new ArrayList<GraphObject>());
+	    Singleton.output.put("Cancer",Cancer=new ArrayList<GraphObject>());
+	    Singleton.output.put("Virgo",Virgo=new ArrayList<GraphObject>());
+	    Singleton.output.put("Cancer",Cancer=new ArrayList<GraphObject>());
+	    Singleton.output.put("Libra",Libra=new ArrayList<GraphObject>());
+	    Singleton.output.put("Scorpio",Scorpio=new ArrayList<GraphObject>());
+	    Singleton.output.put("Sagittarius",Sagittarius=new ArrayList<GraphObject>());
+	    Singleton.output.put("Capricorn",Capricorn=new ArrayList<GraphObject>());
+	    Singleton.output.put("Aquarius",Aquarius=new ArrayList<GraphObject>());
+	    Singleton.output.put("Pisces", Pisces=new ArrayList<GraphObject>());
+	    
+    if (Singleton.friendInfoList != null){
+    
+    	index=0;    	
+    	Log.d(TAG,"running for "+Singleton.Id+" "+Singleton.Name);
+    	bd="start";
+    	for (GraphObject friendInfo: Singleton.friendInfoList){
+    	if (friendInfo.getProperty("uid").toString().equals(Singleton.Id.toString())&&friendInfo.getProperty("relationship_status").toString().substring(0,2).equals("Ma")){
+    		Married=true;
+    		Log.d(TAG,"married"+friendInfo.getProperty("relationship_status").toString().substring(0,2));
+    	}
+    		if (((friendInfo.getProperty("relationship_status"))!=null&&!friendInfo.getProperty("relationship_status").toString().substring(0,2).equals("Ma"))||(friendInfo.getProperty("relationship_status")==null)){//NOT MARRIED
+    			Log.d(TAG,"this is b"+friendInfo.getProperty("birthday_date").toString()+" "+friendInfo.getProperty("name") +"b"+friendInfo.getProperty("birthday").toString());
+    			if (friendInfo.getProperty("birthday_date")!=null && friendInfo.getProperty("birthday_date").toString().length()>4){
+    					//has birthday
+    					String date=friendInfo.getProperty("birthday_date").toString().substring(0, 5);	
+    			        Date date1 = null;
+						try {
+							date1 = new SimpleDateFormat("MM/dd",Locale.ENGLISH).parse(date);
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						Calendar cal = Calendar.getInstance();
+						cal.setTime(date1);
+						int month = cal.get(Calendar.MONTH)+1;
+						int day = cal.get(Calendar.DAY_OF_MONTH);
+						int year = cal.get(Calendar.YEAR);
+						
+						if (date1!=null){
+							String signs=ZodiacSign(date1, "ff");
+							Log.d(TAG,"DATE "+date+friendInfo.getProperty("name")+"sign is "+signs+" day "+day+" month "+month);
+						
+							if (Singleton.output.containsKey(signs)){//find sign and put it into the right list
+								Singleton.output.get(signs).add(friendInfo);
+								Log.d(TAG,"uid"+friendInfo.getProperty("uid").toString());
+								Log.d(TAG,"uid"+Singleton.Id.toString());
+								if (friendInfo.getProperty("uid").toString().equals(Singleton.Id.toString())){
+								//	bd=friendInfo.getProperty("birthday_date").toString();
+								//	gender=friendInfo.getProperty("sex").toString();							
+									Log.d(TAG,"YES");
+								}
+							}//end adding list
+						}//end check null
+    				}//birthday
+    			
+    			}//end for relationship
+    	        	
+    		}//end for the whole list. exit if bd
+    	
+   
+    
+    	    }//end of checking list
+    return Singleton.output;
+    
+    }//getlist
 	public void set(){
 	 ProfilePictureView profilePictureM = (ProfilePictureView)findViewById(R.id.profilePicture);
    	 ProfilePictureView profilePicture = (ProfilePictureView)findViewById(R.id.profilePicture1);
    	 ProfilePictureView profilePicture2 = (ProfilePictureView)findViewById(R.id.profilePicture2);
    	 ProfilePictureView profilePicture3 = (ProfilePictureView)findViewById(R.id.profilePicture3);
-   	 Button back= (Button)findViewById(R.id.back);
-   	
+   	 TextView text1= (TextView)findViewById(R.id.text1);
+   	 TextView text2= (TextView)findViewById(R.id.text2);
+   	 TextView text3= (TextView)findViewById(R.id.text3);
+   	 Button send= (Button)findViewById(R.id.send);
+   	 send.setOnClickListener(new MyClickListener());
+
    	 Log.d(TAG, "bd was start and now "+Singleton.bd);
    	 
    	 
@@ -252,7 +291,7 @@ public class MatchFriend extends Activity {
    			
    			if(i< Singleton.friendInfoList.size()){
    			
-   			GraphObject o = output.get(sign).get(i);	 
+   			GraphObject o = Singleton.output.get(sign).get(i);	 
    			Object sex = o.getProperty("sex");
    			op=sex.toString();//op is the candidate gender
    			Log.d(TAG,"OP"+op);
@@ -261,7 +300,9 @@ public class MatchFriend extends Activity {
    		
 				if (!op.equals(Singleton.gender)){//check if the oppose gender
 					Log.d(TAG, "MATCH"+Singleton.gender);
-	        	array[j]=output.get(sign).get(i);
+	        	array[j]=Singleton.output.get(sign).get(i);
+	        	
+	        	
 	        	j++;   	
 	        	Log.d(TAG,"index of list"+i+" index of array"+j);
    			}
@@ -271,42 +312,51 @@ public class MatchFriend extends Activity {
    			}//if not end list
    		}//for
    	 Log.d(TAG,"USER BIRTHDAY IS "+bd);
-   	// output.
+   	// Singleton.output.
    	 profilePictureM.setProfileId(Singleton.Id);
    	 if (array[1]!=null){
 		     profilePicture.setProfileId(array[1].getProperty("uid").toString());
 		     profilePicture.setOnClickListener(new MyClickListener());
 		     profilePictureM.setOnClickListener(new MyClickListener());
+		     text1.setText(array[1].getProperty("name").toString());
 		     
 		     
    	 }
    	 if (array[2]!=null){
 		     profilePicture2.setProfileId(array[2].getProperty("uid").toString());
-   	   	 profilePicture2.setOnClickListener(new MyClickListener());
+		     profilePicture2.setOnClickListener(new MyClickListener());
+		     text2.setText(array[2].getProperty("name").toString());
+	     
    	 }
    	 if (array[3]!=null){
 		     profilePicture3.setProfileId(array[3].getProperty("uid").toString());
 		     profilePicture3.setOnClickListener(new MyClickListener());
+		     text3.setText(array[3].getProperty("name").toString());
+		     
    	 }
    	 
    	 }
 	}//end set
+	
+
+
+
         public void message(){//birtday not found
 	 		   final Toast toast2= Toast.makeText(MatchFriend.this, Singleton.Name.toString()+" is Married, Please chose a different friend", Toast.LENGTH_LONG);
 	 		   toast2.setGravity(Gravity.TOP|Gravity.LEFT, 0, 0);
 	 		 
 		 		 LinearLayout toastLayout = (LinearLayout) toast2.getView();
 		 		 TextView toastTV = (TextView) toastLayout.getChildAt(0);
-		 		 toastTV.setTextSize(50);
+		 		 toastTV.setTextSize(30);
 		 		 toast2.show();
-	 		new CountDownTimer(6000, 1000)
+	 		new CountDownTimer(1500, 1000)
 	 		{
 
 	 		    public void onTick(long millisUntilFinished) {toast2.show();}
 	 		    public void onFinish() {toast2.show();}
 
 	 		}.start();
-	 		   toast2.setDuration(5200);
+	 		   toast2.setDuration(500);
 				toast2.show();
 				finish();
 
@@ -335,7 +385,7 @@ public class MatchFriend extends Activity {
 	    return result;
 	}
 	
-	public String ZodiacSign(Date date, String element)
+	public static String ZodiacSign(Date date, String element)
     {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
@@ -406,6 +456,7 @@ public class MatchFriend extends Activity {
 	
 	
 	class MyClickListener implements android.view.View.OnClickListener {
+		
 
 		public void onClick(View v) {
 			
@@ -432,14 +483,63 @@ public class MatchFriend extends Activity {
 				eaw.show();
 				}
 			break;
-
+			case R.id.send:{
+				send();}
+			break;
 			}
-		}
 
 	}
 	
-	
-	
+	public void send(){
+		 Bitmap bitmap = takeScreenshot();
+         saveBitmap(bitmap); 
+         if (imagePath!=null){
+        	 Log.d("bugbug","root "+imagePath);
+         Intent shareIntent = new Intent();
+         shareIntent.setAction(Intent.ACTION_SEND);
+         shareIntent.setType("image/*");
+         Uri uri=Uri.fromFile(imagePath);
+         shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+         startActivity(Intent.createChooser(shareIntent, "Share via"));
+         }
+        
+
+      
+	}
+	public Bitmap takeScreenshot() {
+        View rootView = findViewById(android.R.id.content).getRootView();
+        rootView.setDrawingCacheEnabled(true);
+        return rootView.getDrawingCache();
+     }
+
+ public void saveBitmap(Bitmap bitmap) {
+     String root = Environment.getExternalStorageDirectory().toString();
+    
+      File myDir = new File(root + "/ScreenshotFolder/");    
+             myDir.mkdirs();
+            
+             if (myDir.exists()) {
+            	   
+             } 
+             Random generator = new Random(); 
+             int n = 10000;
+             n = generator.nextInt(n);
+             String fname = "Screenshot-"+ n +".jpg";
+              imagePath = new File (myDir, fname);
+     FileOutputStream fos;
+     try {
+         fos = new FileOutputStream(imagePath);
+         bitmap.compress(CompressFormat.JPEG, 100, fos);
+         fos.flush();
+         fos.close();
+     } catch (FileNotFoundException e) {
+         Log.e("GREC", e.getMessage(), e);
+     } catch (IOException e) {
+         Log.e("GREC", e.getMessage(), e);
+     }
+     finish();
+ }
+	}
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    super.onActivityResult(requestCode, resultCode, data);

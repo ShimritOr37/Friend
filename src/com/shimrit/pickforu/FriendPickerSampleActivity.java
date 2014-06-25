@@ -28,25 +28,34 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.Manifest.permission;
+import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -74,8 +83,8 @@ import com.facebook.widget.ProfilePictureView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class FriendPickerSampleActivity extends FragmentActivity {
-
+public class FriendPickerSampleActivity extends FragmentActivity implements Runnable {
+	private OnClickListener clickListener;
 	Gson gson;
 	static int tryit = 0;
 	Intent intent44;
@@ -97,7 +106,8 @@ public class FriendPickerSampleActivity extends FragmentActivity {
 	TextView birthday, relationship;
 	private UiLifecycleHelper lifecycleHelper;
 	boolean pickFriendsWhenSessionOpened;
-	Button post, showlist, graph, button3, nextFriendi, authButton;
+	Button post, showlist, graph, button3, nextFriendi ;
+	LoginButton authButton;
 	public static Facebook fb;
 	ImageView pic;
 	ImageView imgView;
@@ -120,11 +130,15 @@ public class FriendPickerSampleActivity extends FragmentActivity {
 	Drawable enterShape;
 	protected GraphObjectList<GraphObject> friendInfoList2;
 	ArrayList<String> help = new ArrayList<String>();
-
+	private static  TextView con;
+	static  ProfilePictureView sp1,sp2,sp3,sp4,sp5,sp6,sp7,sp8,sp9,sp10,sp11;
+	@SuppressWarnings("null")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		if (isOnline()){
+		com.facebook.Settings.setPlatformCompatibilityEnabled(true);
 		   if (savedInstanceState == null) {
 		        // Add the fragment on initial activity setup
 		        mainFragment = new MainFragment();
@@ -137,34 +151,67 @@ public class FriendPickerSampleActivity extends FragmentActivity {
 		        mainFragment = (MainFragment) getSupportFragmentManager()
 		        .findFragmentById(android.R.id.content);
 		    }
+		}else{
+			new AlertDialog.Builder(this)
+		    .setTitle("There is no  internet connection")
+		    .setMessage("Are you want to use an offline mode anyway?")
+		    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+		        public void onClick(DialogInterface dialog, int which) { 
+		            // continue with delete
+		        }
+		     })
+		    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+		        public void onClick(DialogInterface dialog, int which) { 
+		            // do nothing
+		        }
+		     })
+		    .setIcon(android.R.drawable.ic_dialog_alert)
+		     .show();
+		}
 	
 		setContentView(R.layout.main);
 
 	
-		
-		Log.d(TAG,"id is recover "+Singleton.Id);
-		fb = new Facebook("143407059196911");
+	if (Singleton.UserId!=null){	
+		Log.d(TAG,"id is recover "+Singleton.UserId);
 		profilePicture = (ProfilePictureView) findViewById(R.id.profilePicture);
-		profilePicture.setProfileId(Singleton.Id);
-		
-		authButton = (Button)findViewById(R.id.authButton);
-		
-		
-		publishCom = (ImageButton) findViewById(R.id.publishCom);
-		nextFriendi = (Button) findViewById(R.id.nextF);
-		//nextFriendi.setVisibility(View.INVISIBLE);
+		profilePicture.setProfileId(Singleton.UserId);
 
+    }
 	
+		authButton = (LoginButton)findViewById(R.id.authButton);//login sec time
+	
+		
+		fb = new Facebook("143407059196911");	
+		publishCom = (ImageButton) findViewById(R.id.publishCom);
+		// setup new possible matches
+		 con=(TextView)findViewById(R.id.con);
 
+			//Thread for swipe pictures
+			 Thread currentThread = new Thread(this);
+		     currentThread.start();	
+
+		
+		
 		// PickFriends declaration
 		resultsTextView = (TextView) findViewById(R.id.resultsTextView);
 		pickFriendsButton = (ImageButton) findViewById(R.id.pickFriendsButton);
 		pickFriendsButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
+				Singleton.pick=0;
 				onClickPickFriends();
 
 			}
 		});
+		publishCom=(ImageButton) findViewById(R.id.publishCom);
+		pickFriendsButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View view) {
+				Singleton.pick=1;
+				onClickPickFriends();
+
+			}
+		});
+		
 
 		lifecycleHelper = new UiLifecycleHelper(this,
 				new Session.StatusCallback() {
@@ -176,6 +223,22 @@ public class FriendPickerSampleActivity extends FragmentActivity {
 				});
 		lifecycleHelper.onCreate(savedInstanceState);
 		
+	}
+	
+	public boolean isOnline() 
+	{
+	    //Getting the ConnectivityManager.
+	    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+	    //Getting NetworkInfo from the Connectivity manager.
+	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
+
+	    //If I received an info and isConnectedOrConnecting return true then there is an Internet connection.
+	    if (netInfo != null && netInfo.isConnectedOrConnecting()) 
+	    {
+	        return true;
+	    }
+	    return false;
 	}
 
 	public void onClick(View view) {
@@ -195,70 +258,44 @@ public class FriendPickerSampleActivity extends FragmentActivity {
 
 		int id = v.getId();
 		if (R.id.publishCom == id) {
-
-			Intent intent3 = new Intent(this, DragActivity.class);
-			startActivity(intent3);
+			//authButton.setPublishPermissions("publish_actions");
+			Singleton.pick=1;
+			onClickPickFriends();
+		//	Intent intent3 = new Intent(this, DragActivity.class);
+			//startActivity(intent3);
 		}
+		
+		if (R.id.matchMyself == id) {
+			if (ensureOpenSession()){
+			Singleton.Id=Singleton.UserId;
+			if (Singleton.UserBd!=null){
+			Singleton.bd=Singleton.UserBd;}else{Singleton.bd="start";}
+			Singleton.Name=Singleton.UserName;
+			Singleton.gender=Singleton.genderUser;
+			Log.d(TAG,"USER DETAILS"+Singleton.Id+" "+Singleton.bd+" "+Singleton.Name);
+			Intent intent4 = new Intent(this, MatchFriend.class);
+			startActivity(intent4);
+		}
+		}
+		
 
 	}
 
 	@SuppressWarnings("deprecation")
-	public void buttonClicks2(View v) throws FacebookError,
-			MalformedURLException, IOException, ParseException, JSONException {
+	public void buttonClicks2(View v) {
+			
 		// switch (v.getId()){
 		int id = v.getId();
-	/*	if (R.id.logOut == id) {
+		if (R.id.authButton == id) {
 
-			if (Session.getActiveSession() != null) {
-				Session.getActiveSession().closeAndClearTokenInformation();
-			}
-
-			Session.setActiveSession(null);
-			profilePicture.setProfileId(null);
-			nextFriendi.setVisibility(View.INVISIBLE);
-			birthday.setVisibility(View.INVISIBLE);
-		}*/
+			//StartLogin();
+		}
 		// login
 
 	}// end onClick
-
-	public void nextFriend(View v) throws MalformedURLException {
-		index++;
 	
-		// imgView= (ImageView)findViewById(R.id.imageView1);
-		birthday = (TextView) findViewById(R.id.birthday);
-		TextView namef = (TextView) findViewById(R.id.namef);
-		relationship = (TextView) findViewById(R.id.relationship);
-		
-			if (Singleton.friendInfoList != null) {
-				friendInfoList=Singleton.friendInfoList;
-				
-				//Singleton.profilePicture.setProfileId(friendInfoList.get(index)
-					//	.getProperty("uid").toString());
-				
-				Log.d(TAG,friendInfoList.get(index)
-						.getProperty("uid").toString());
-				
-				String bd = friendInfoList.get(index)
-						.getProperty("birthday_date").toString();
 
-				birthday.setText(bd);
 
-				namef.setText(friendInfoList.get(index).getProperty("name")
-						.toString());
-
-				if (friendInfoList.get(index).getProperty("relationship_status") != null){
-					relationship.setText((CharSequence) friendInfoList
-							.get(index).getProperty("relationship_status")
-							.toString());
-				}
-				
-				Singleton.friendInfo=friendInfoList.get(index);
-				// birthday.setText("SS");
-			
-
-	}
-	}
 
 	private static final int BUFFER_IO_SIZE = 8000;
 	private static final int NEW_MATCH = 2;
@@ -299,7 +336,7 @@ public class FriendPickerSampleActivity extends FragmentActivity {
 	super.onStart();
 	
 		// Update the display every time we are started.
-		displaySelectedFriends(RESULT_OK);
+		//displaySelectedFriends(RESULT_OK);
 	
 
 	}
@@ -307,7 +344,7 @@ public class FriendPickerSampleActivity extends FragmentActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-
+		
 		// Call the 'activateApp' method to log an app event for use in
 		// analytics and advertising reporting. Do so in
 		// the onResume methods of the primary Activities that an app may be
@@ -321,14 +358,22 @@ public class FriendPickerSampleActivity extends FragmentActivity {
 			
 			displaySelectedFriends(resultCode);
 			Log.d("bugbug", "pf");
-			trythis();
+			if (Singleton.pick==0) {
+			trythis();}
+			if (Singleton.pick==1) {
+				startDrag();}
+			
 		}
 			break;
 
 		case RESULT_OK: {
 			displaySelectedFriends(resultCode);
 			Log.d("bugbug", "rs");
-			trythis();
+			if (Singleton.pick==0) {
+				trythis();}
+				if (Singleton.pick==1) {
+					startDrag();}
+				
 		}
 
 		default:
@@ -336,6 +381,13 @@ public class FriendPickerSampleActivity extends FragmentActivity {
 					resultCode, data);
 			break;
 		}
+	}
+
+	private void startDrag() {
+		// TODO Auto-generated method stub
+		intent44 = new Intent(this, DragActivity.class);
+		startActivity(intent44);
+		
 	}
 
 	private boolean ensureOpenSession() {
@@ -364,7 +416,7 @@ public class FriendPickerSampleActivity extends FragmentActivity {
 		}
 	}
 
-	private void displaySelectedFriends(int resultCode) {
+	private  void displaySelectedFriends(int resultCode) {
 
 		Log.d("BUGBUG", "res code is " + resultCode);
 		String results = "";
@@ -388,8 +440,26 @@ public class FriendPickerSampleActivity extends FragmentActivity {
 					Log.d("bugbug", "in help" + user.getName());
 					Singleton.Id = user.getId();
 					Singleton.Name = user.getName();
-					
+					boolean flage=true;
+					if (Singleton.friendInfoList!=null||flage){
+						for (GraphObject friendInfo: Singleton.friendInfoList) {
+							if (friendInfo!=null)
+							if (friendInfo.getProperty("uid").toString().equals(Singleton.Id.toString())){
+								if (friendInfo.getProperty("birthday_date")!=null){
+									Singleton.bd=friendInfo.getProperty("birthday_date").toString();
+									flage=false;
+									Log.d("bugbug","bd"+Singleton.bd);
+								}
+								if (friendInfo.getProperty("sex")!=null)
+									Singleton.gender=friendInfo.getProperty("sex").toString();
+								
+						}
+					}
+				
+					Singleton.next=false;
+					}
 				}
+					
 				names.add(user.getName());
 			}
 
@@ -431,6 +501,60 @@ public class FriendPickerSampleActivity extends FragmentActivity {
 		} else {
 			pickFriendsWhenSessionOpened = true;
 		}
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		  try {
+	            // all the stuff we want our Thread to do goes here
+			  Log.d("bugbug","new thread"); 
+			  Thread.sleep(12000);
+			
+	            // signaling things to the outside world goes like this
+	            threadHandler.sendEmptyMessage(0);
+	            Log.d("bugbug","new thread");
+	        } catch (InterruptedException e) {
+	            //don't forget to deal with the Exception !!!!!
+	        }
+		
+	}
+	private Handler threadHandler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            // whenever the Thread notifies this handler we have
+            // only this behavior
+            Log.d("bugbug","new mess");
+           
+        }
+    };
+	public static void setPic() {
+		// TODO Auto-generated method stub
+		 
+		String sign= "Taurus";
+
+		Map<String, ProfilePictureView> setImage = new HashMap<String, ProfilePictureView>();;
+	
+		
+		setImage.put("p1", sp1);
+		setImage.put("p2", sp2);
+		setImage.put("p3", sp3);
+		setImage.put("p4", sp4);
+		setImage.put("p5", sp5);
+		setImage.put("p6", sp6);
+		setImage.put("p7", sp7);
+		setImage.put("p8", sp8);
+		setImage.put("p9", sp9);
+		setImage.put("p10",sp10);
+		setImage.put("p11",sp11);
+		
+		for (int j = 1; j<=11; j++) {
+			if (!Singleton.output.isEmpty()&&Singleton.output.get(sign).get(j)!=null){
+			setImage.get("p".concat(String.valueOf(j))).setProfileId(Singleton.output.get(sign).get(j).toString());
+			Log.d("bugbug","enter pp");
+			}
+		}
+		
+		
 	}
 
 }

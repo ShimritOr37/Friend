@@ -5,6 +5,7 @@ import java.util.List;
 
 
 import com.shimrit.pickforu.R;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+@SuppressLint("WrongViewCast")
 public class InteractiveArrayAdapter extends ArrayAdapter<Model> {
 
   private final List<Model> list;
@@ -30,7 +32,8 @@ public class InteractiveArrayAdapter extends ArrayAdapter<Model> {
     protected CheckBox checkbox;
   }
 
-  @Override
+  @SuppressLint("WrongViewCast")
+@Override
   public View getView(int position, View convertView, ViewGroup parent) {
     View view = null;
     if (convertView == null) {
@@ -38,7 +41,7 @@ public class InteractiveArrayAdapter extends ArrayAdapter<Model> {
       view = inflator.inflate(R.layout.rowbuttonlayout, null);
       final ViewHolder viewHolder = new ViewHolder();
       viewHolder.text = (TextView) view.findViewById(R.id.label);
-      viewHolder.checkbox = (CheckBox) view.findViewById(R.id.label);
+      viewHolder.checkbox =  (CheckBox) view.findViewById(R.id.label);
       viewHolder.checkbox
           .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 

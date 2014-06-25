@@ -6,7 +6,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" 
+    >
    
      <LinearLayout
             android:layout_width="match_parent"
@@ -30,14 +31,14 @@
       
       <com.facebook.widget.ProfilePictureView
           android:id="@+id/profilePicture1"
-          android:layout_width="120dp"
+          android:layout_width="100dp"
           android:layout_height="wrap_content"
           app:is_cropped="true"
           app:preset_size="large" />
 
       <com.facebook.widget.ProfilePictureView
           android:id="@+id/profilePicture2"
-          android:layout_width="120dp"
+          android:layout_width="100dp"
           android:layout_height="wrap_content"
           app:is_cropped="true"
           app:preset_size="large" />
@@ -45,60 +46,46 @@
       
       <com.facebook.widget.ProfilePictureView
           android:id="@+id/profilePicture3"
-          android:layout_width="120dp"
+          android:layout_width="100dp"
           android:layout_height="wrap_content"
           app:is_cropped="true"
           app:preset_size="large" />
-
-     <Button
-        android:id="@+id/back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="Back"
-        android:text="Back" />
+       </LinearLayout>
       
-    
-    </LinearLayout>
-
-      
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/gender"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Please choose gender"
-                android:visibility="invisible"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        </LinearLayout>
-
-        <LinearLayout
+       <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
 
-            <RadioButton
-                android:id="@+id/female"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Female"
-                android:visibility="invisible"
-                 />
+     <TextView
+         android:id="@+id/text1"
+         android:layout_width="100dp"
+         android:layout_height="wrap_content"
+         android:text="TextView" />
 
-        <RadioButton
-            android:id="@+id/male"
+     <TextView
+         android:id="@+id/text2"
+         android:layout_width="100dp"
+         android:layout_height="wrap_content"
+         android:text="TextView" />
+      <TextView
+         android:id="@+id/text3"
+         android:layout_width="100dp"
+         android:layout_height="wrap_content"
+         android:text="TextView" />
+ </LinearLayout>
+
+
+        <Button
+            android:id="@+id/send"
+            android:layout_marginTop="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Male" 
-            android:visibility="invisible"/>
-        
-        </LinearLayout>
+            android:text="Send this to My friend"
+             />
+ 
+   </LinearLayout>
     
- </LinearLayout>
+
 
 

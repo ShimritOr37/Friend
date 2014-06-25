@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_column="0"
             android:layout_row="0"
+            android:background="@drawable/shape"
              />
     </LinearLayout>
 
@@ -38,6 +39,7 @@
             android:id="@+id/myimage3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/funny"
              />
 
     </LinearLayout>
@@ -57,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_column="0"
             android:layout_row="0"
-            />
+            android:background="@drawable/smart" />
         
     </LinearLayout>
 
@@ -76,17 +78,20 @@
             android:layout_height="wrap_content"
             android:layout_column="0"
             android:layout_row="0"
+            android:background="@drawable/kind"
           />
 
        
     </LinearLayout>
 
-     <Button
-         android:id="@+id/back"
-         android:layout_column="0"
-         android:layout_gravity="left|bottom"
-         android:layout_row="1"
-         android:onClick="back"
-         android:text="Back" />
+  <Button
+      android:id="@+id/nextF"
+      android:layout_width="110dp"
+      android:layout_height="50dp"
+      android:layout_column="1"
+      android:layout_gravity="right|bottom"
+      android:layout_row="1"
+      android:onClick="nextFriend"
+      android:text="Change friend!" />
 
 </GridLayout>

@@ -39,6 +39,8 @@ public class DateChoser extends Activity {
 		
 		if (Singleton.gender==null||!Singleton.gender.contains("male")){
 			group.setVisibility(View.VISIBLE);
+			 TextView lblgender= (TextView)findViewById(R.id.lblgender);
+			 lblgender.setVisibility(View.VISIBLE);
 			if (!Singleton.bd.equals("start")){
 				btnChangeDate = (Button) findViewById(R.id.btnChangeDate);
 				btnChangeDate.setVisibility(View.INVISIBLE);//button invis
